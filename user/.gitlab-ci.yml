@@ -1,0 +1,46 @@
+image: docker:stable
+stages:
+  - stop
+  - build
+  - deploy
+variables:
+  GROUP_NAME: gear-istio
+  PROJECT_NAME: user
+  IMAGE_REPOSITORY: ${GROUP_NAME}-${PROJECT_NAME}:v${CI_PIPELINE_ID}
+  MAVEN_OPTS: '-Dmaven.repo.local=/opt/cache/.m2/repository'
+  REPLICAS: 1
+  MAVEN_CACHE: /var/maven/.m2
+before_script:
+  - export CI_START_TIMESTAMP=`date +%s`
+  - export UNIQUE_NAME=$(echo $GROUP_NAME|sed 's/-//g' )-$PROJECT_NAME;
+.k8s_build_image:
+  stage: build
+  script: &ref_0
+    - docker-compose -f ci/build/build.yml -p ${GROUP_NAME}-${PROJECT_NAME} up --abort-on-container-exit
+    - chmod +x ./ci/build/build.sh
+    - ./ci/build/build.sh ${IMAGE_REPOSITORY}
+.k8s_apply_deploy:
+  stage: deploy
+  script: &ref_1
+    - chmod +x ./ci/deploy/deploy.sh
+    - ./ci/deploy/deploy.sh
+build_job:
+  stage: build
+  script: *ref_0
+  tags:
+    - builder
+  only:
+    - develop
+    - staging
+    - test
+    - file
+deploy_job:
+  stage: deploy
+  script: *ref_1
+  tags:
+    - builder
+  only:
+    - develop
+    - staging
+
+

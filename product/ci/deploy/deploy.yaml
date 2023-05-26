@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${project_name}
+  namespace: ${namespace}
+  labels:
+    app: ${project_name}
+spec:
+  replicas: ${replicas} # 期望创建1个实例（即1个pod）
+  selector: # 选择label： app=${project_name} 的pod来创建实例
+    matchLabels:
+      app: ${project_name}
+  template:
+    metadata:
+      labels:
+        app: ${project_name}
+    spec:
+      containers:
+        - name: ${project_name}-api
+          image: internalacr.azurecr.cn/${image_repository}
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: ${project_name}-cfgmap
+          ports:
+            - name: http
+              containerPort: 8080
+          # readinessProbe:
+          #   httpGet:
+          #     path: /foundation/api/checkHealth
+          #     port: http
+          #   initialDelaySeconds: 120
+          #   periodSeconds: 60
+          #   failureThreshold: 6
+          # livenessProbe:
+          #   httpGet:
+          #     path: /foundation/api/checkHealth
+          #     port: http
+          #   initialDelaySeconds: 180
+          #   periodSeconds: 60
+          #   failureThreshold: 6

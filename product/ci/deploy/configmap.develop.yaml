@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ${project_name}-cfgmap
+  namespace: ${namespace}
+data:
+  SPRING_APPLICATION_NAME: ${project_name}
+  SPRING_PROFILES_ACTIVE: prod
+  SPRING_REDIS_HOST: 127.0.0.1
+  SPRING_REDIS_PORT: '6379'
+  SPRING_REDIS_PASSWORD: ''
+  SPRING_REDIS_TIMEOUT: '1000'
+  SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_TIME_ZONE: Asia/Shanghai
+  SPRING_DATASOURCE_URL: jdbc:mysql://mysql.azure.chilunyc.com:3306/gear_monitor_dev?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
+  SPRING_DATASOURCE_USERNAME: monitor2022
+  SPRING_DATASOURCE_PASSWORD: Monitor2022!
+  WEBHOOK_URL: https://open.feishu.cn/open-apis/bot/v2/hook/5854dc9e-398f-4fd6-963e-8b8788e6ea62

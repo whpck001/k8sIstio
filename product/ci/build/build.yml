@@ -1,0 +1,17 @@
+version: '3'
+services:
+  maven:
+    container_name: ${GROUP_NAME}-${PROJECT_NAME}-builder
+    image: openjdk:11-jdk-buster
+    volumes:
+      - ../../:/app
+      - ${MAVEN_CACHE}:/var/maven/.m2
+      - ${MAVEN_CACHE}:/root/.m2
+    working_dir: /app
+    environment:
+      TZ: Asia/Shanghai
+    command: bash -c "chmod +x mvnw && ./mvnw package  -Dmaven.test.skip=true"
+networks:
+  default:
+    external:
+      name: builder-network
